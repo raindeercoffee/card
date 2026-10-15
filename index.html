@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>有人送你一張卡片 ✉️</title>
+<meta name="description" content="打開看看，有人想對你說的話。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/card.css">
+<style>
+  html, body { margin: 0; height: 100%; background: #ebe8f3; }
+  .msg {
+    position: fixed; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center;
+    font-family: "LXGW WenKai TC", "PingFang TC", "Microsoft JhengHei", sans-serif; color: #3b3552; font-size: 18px; line-height: 1.8;
+  }
+  .msg a { color: #9d92cc; }
+  .msg .env { font-size: 44px; display: block; animation: bob 1.6s ease-in-out infinite; }
+  @keyframes bob { 50% { transform: translateY(-8px); } }
+</style>
+</head>
+<body>
+<div class="msg" id="msg"><div><span class="env">✉️</span>卡片送來了…</div></div>
+
+<script src="js/config.js"></script>
+<script src="js/options.js"></script>
+<script src="js/card.js"></script>
+<script>
+  (async function () {
+    const code = new URLSearchParams(location.search).get('c');
+    if (!code) { location.replace('make.html'); return; }
+    const msg = document.getElementById('msg');
+    const CFG = window.CARD_CONFIG;
+    try {
+      const res = await fetch(CFG.supabaseUrl + '/rest/v1/rpc/get_greeting_card', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', apikey: CFG.supabaseKey },
+        body: JSON.stringify({ p_id: code.trim().toLowerCase() }),
+      });
+      const data = res.ok ? await res.json() : null;
+      if (!data) {
+        msg.innerHTML = '<div>找不到這張卡片 🥲<br>網址可能少複製了幾個字。<br><br><a href="make.html">我也來做一張卡片</a></div>';
+        return;
+      }
+      msg.remove();
+      CardRenderer.render(document.body, data);
+    } catch (e) {
+      msg.innerHTML = '<div>網路好像不太順 🥲<br>等一下再重新整理看看。</div>';
+    }
+  })();
+</script>
+</body>
+</html>

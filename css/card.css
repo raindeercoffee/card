@@ -1,0 +1,235 @@
+/* ============ 一張卡片的外觀(收卡片頁 + 預覽共用) ============ */
+.cv-root {
+  --page: #ebe8f3;
+  --page-2: #f6f3fb;
+  --paper: #fffaf3;
+  --ink: #3b3552;
+  --accent: #9d92cc;
+  --soft: #8a83a8;
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  color: var(--ink);
+  background: radial-gradient(circle at 50% 18%, var(--page-2), var(--page) 72%);
+  background-color: var(--page);
+  font-family: "LXGW WenKai TC", "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+}
+.cv-root * { box-sizing: border-box; }
+
+/* 三種版型的配色 */
+.cv-root.tpl-lavender { --page: #ebe8f3; --page-2: #f6f3fb; --paper: #fffaf3; --ink: #3b3552; --accent: #9d92cc; --soft: #8a83a8; }
+.cv-root.tpl-envelope { --page: #efe6d8; --page-2: #f8f2e9; --paper: #fffdf8; --ink: #4a3b2f; --accent: #b5674f; --soft: #9a8574; }
+.cv-root.tpl-starry   { --page: #141733; --page-2: #262b5c; --paper: #22274f; --ink: #f1ecff; --accent: #f3d27a; --soft: #b9b3d8; }
+
+/* 背景名畫:鋪滿整個畫面,不跟著捲動 */
+.cv-bg {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  pointer-events: none;
+}
+.cv-bg.ready { opacity: 1; }
+.cv-bg::after { content: ""; position: absolute; inset: 0; background: rgba(255, 255, 255, .12); }
+.tpl-starry .cv-bg::after { background: rgba(10, 12, 40, .25); }
+
+/* 夜空版:沒有名畫時,背景有小星星 */
+.cv-sky { position: fixed; inset: 0; pointer-events: none; }
+.cv-sky i {
+  position: absolute; width: 3px; height: 3px; border-radius: 50%;
+  background: #fff7d6; opacity: .2; animation: cv-twinkle 3s ease-in-out infinite;
+}
+@keyframes cv-twinkle { 50% { opacity: .9; } }
+
+.cv-stage {
+  position: relative;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 7vh 16px 14vh;
+}
+
+/* ---------- 卡片 ---------- */
+.cv-card {
+  position: relative;
+  width: min(100%, 440px);
+  min-height: min(132vw, 590px);
+  perspective: 1400px;
+}
+.cv-inside {
+  min-height: inherit;
+  background: var(--paper);
+  border-radius: 18px;
+  box-shadow: 0 22px 50px -22px rgba(30, 25, 60, .45);
+  padding: 26px 26px 30px;
+}
+.has-painting .cv-inside { background: color-mix(in srgb, var(--paper) 93%, transparent); backdrop-filter: blur(2px); }
+.cv-title {
+  text-align: center;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  margin: 6px 0 18px;
+  color: var(--accent);
+}
+
+/* ---------- 文字一段一段飄出來 ---------- */
+.cv-line { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .9s ease; }
+.cv-line > p {
+  overflow: hidden;
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.95;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  opacity: 0;
+  transform: translateY(18px);
+  filter: blur(4px);
+  transition: opacity 1.4s ease, transform 1.6s cubic-bezier(.2, .7, .2, 1), filter 1.4s ease, padding .9s ease;
+}
+.cv-line.show { grid-template-rows: 1fr; }
+.cv-line.show > p { opacity: 1; transform: none; filter: none; padding: 7px 0; }
+.cv-line.sign > p { text-align: right; }
+
+/* ---------- 結尾動畫:零件疊在一起 ---------- */
+.cv-ending {
+  position: relative;
+  width: 78%;
+  margin: 20px auto 0;
+  opacity: 0;
+  transform: translateY(30px) scale(.5);
+  transition: opacity .6s ease, transform .9s cubic-bezier(.3, 1.6, .5, 1);
+}
+.cv-ending.wide { width: 100%; }
+.cv-ending.show { opacity: 1; transform: none; }
+.cv-ending img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.cv-ending .mv-wave  { animation: cv-wave 2.4s cubic-bezier(.45, 0, .3, 1.4) infinite; }
+.cv-ending .mv-blink { opacity: 0; animation: cv-blink 3.6s steps(1) infinite; }
+.cv-ending .mv-sway  { animation: cv-sway 4s ease-in-out infinite; }
+@keyframes cv-wave {
+  0%, 75%, 100% { transform: rotate(0deg); }
+  15%, 45%      { transform: rotate(-20deg); }
+  30%, 60%      { transform: rotate(12deg); }
+}
+@keyframes cv-blink { 0%, 93% { opacity: 0; } 94%, 97% { opacity: 1; } 98% { opacity: 0; } }
+@keyframes cv-sway { 0%, 100% { transform: rotate(-3.5deg); } 50% { transform: rotate(3.5deg); } }
+
+/* 最後的小字:找小麻糬代寫 */
+.cv-cta {
+  text-align: center;
+  font-size: 14px;
+  color: var(--soft);
+  margin: 26px 0 0;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+}
+.cv-cta.show { opacity: 1; }
+.cv-cta a { color: var(--accent); text-decoration: none; border-bottom: 1px dashed currentColor; }
+.cv-cta .cv-make { display: table; margin: 10px auto 0; font-size: 13px; color: var(--soft); }
+
+.cv-credit {
+  margin: 18px 0 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, .92);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .55);
+  text-align: center;
+}
+
+/* ---------- 封面:點了往左翻開 ---------- */
+.cv-cover {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  border-radius: 18px;
+  padding: 24px;
+  cursor: pointer;
+  font: inherit;
+  transform-origin: left center;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  overflow: hidden;
+  box-shadow: 0 22px 50px -22px rgba(30, 25, 60, .55);
+  animation: cv-nudge 3s ease-in-out infinite;
+}
+.cv-cover .c-title { font-size: clamp(36px, 11vw, 52px); font-weight: 700; letter-spacing: .12em; line-height: 1.25; text-align: center; position: relative; }
+.cv-cover .c-to { font-size: 18px; position: relative; }
+.cv-cover .c-hint {
+  position: relative;
+  margin-top: 22px;
+  font-size: 15px;
+  padding: 8px 18px;
+  border-radius: 99px;
+  animation: cv-pulse 1.8s ease-in-out infinite;
+}
+@keyframes cv-nudge { 0%, 70%, 100% { transform: rotateY(0); } 80% { transform: rotateY(-8deg); } 90% { transform: rotateY(0); } }
+@keyframes cv-pulse { 50% { opacity: .55; } }
+/* 翻開要用自己的動畫:直接換掉晃動動畫,不然瀏覽器會跳過中間 */
+.cv-root.opened .cv-cover { animation: cv-open 1.5s cubic-bezier(.6, .05, .3, 1) forwards; pointer-events: none; }
+@keyframes cv-open {
+  0%   { transform: rotateY(0);       opacity: 1; }
+  65%  { transform: rotateY(-100deg); opacity: 1; }
+  100% { transform: rotateY(-120deg); opacity: 0; }
+}
+
+/* 封面 1:薰衣草小紙卡 */
+.cover-lavender { color: #fff; background: linear-gradient(160deg, #bdb4e4, #9d92cc); }
+.cover-lavender .c-hint { background: rgba(255, 255, 255, .22); }
+.cover-lavender .dot { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, .33); }
+
+/* 封面 2:奶油信封 */
+.cover-envelope { color: #6b4a36; background: #f4e9d8; }
+.cover-envelope::before {               /* 信封上蓋 */
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 48%;
+  background: #ead8bd; clip-path: polygon(0 0, 100% 0, 50% 100%);
+  filter: drop-shadow(0 4px 4px rgba(120, 80, 40, .15));
+}
+.cover-envelope::after {                /* 信封下緣的斜線 */
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to top right, transparent 49.6%, rgba(160, 120, 80, .18) 50%, transparent 50.4%) left bottom / 50% 52% no-repeat,
+              linear-gradient(to top left, transparent 49.6%, rgba(160, 120, 80, .18) 50%, transparent 50.4%) right bottom / 50% 52% no-repeat;
+}
+.cover-envelope .seal {
+  position: absolute; top: calc(48% - 30px); left: calc(50% - 30px); width: 60px; height: 60px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #d98585, #b55555 70%); color: #fde9e4;
+  display: grid; place-items: center; font-size: 24px; box-shadow: 0 3px 8px rgba(120, 40, 40, .35); z-index: 1;
+}
+.cover-envelope { justify-content: flex-end; padding-bottom: 20%; }
+.cover-envelope .c-title { font-size: clamp(30px, 9vw, 42px); }
+.cover-envelope .c-hint { background: rgba(181, 103, 79, .12); margin-top: 8px; }
+
+/* 封面 3:夜空星星 */
+.cover-starry {
+  color: #f3d27a; background: linear-gradient(170deg, #343b85, #1b1f4a 75%);
+  box-shadow: inset 0 0 0 1px rgba(243, 210, 122, .35), 0 0 40px -6px rgba(243, 210, 122, .25), 0 22px 50px -22px rgba(0, 0, 0, .7);
+}
+.tpl-starry .cv-inside { box-shadow: inset 0 0 0 1px rgba(243, 210, 122, .25), 0 22px 50px -22px rgba(0, 0, 0, .7); }
+.cover-starry .c-to { color: #e9e4ff; }
+.cover-starry .c-hint { background: rgba(243, 210, 122, .15); }
+.cover-starry .moon {
+  position: absolute; top: 34px; right: 40px; width: 54px; height: 54px; border-radius: 50%;
+  box-shadow: -12px 8px 0 0 #f3d27a; transform: rotate(-20deg);
+}
+.cover-starry .star { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: #fff7d6; animation: cv-twinkle 2.6s ease-in-out infinite; }
+
+/* 音樂開關 */
+.cv-mute {
+  position: fixed; right: 16px; bottom: 16px; width: 46px; height: 46px; border-radius: 50%; border: 0;
+  background: rgba(255, 255, 255, .85); color: #3b3552; font-size: 20px; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(30, 25, 60, .25); display: none; z-index: 5;
+}
+.cv-root.opened .cv-mute { display: block; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cv-cover, .cv-cover .c-hint { animation: none; }
+  .cv-root.opened .cv-cover { animation: cv-fade .6s ease forwards; }
+  @keyframes cv-fade { to { opacity: 0; } }
+  .cv-line > p { transform: none; filter: none; }
+}

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>做一張會動的卡片 ✉️</title>
+<meta name="description" content="選封面、寫下想說的話、配上音樂，做一張會翻開、會飄字的卡片送給重要的人。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/card.css">
+<link rel="stylesheet" href="css/make.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>做一張會動的卡片 ✉️</h1>
+    <p>選封面、寫下想說的話、配上音樂。<br>對方點開時，卡片會翻開，字會一段一段飄出來。免費，一天可以做一張。</p>
+  </header>
+
+  <ol class="steps" id="steps">
+    <li>封面</li><li>名畫</li><li>寫字</li><li>音樂</li><li>結尾</li>
+  </ol>
+
+  <!-- 1 封面 -->
+  <section class="panel" data-step="0">
+    <h2>選一個封面</h2>
+    <p class="sub">對方打開網址，第一眼看到的就是它。</p>
+    <div class="tiles" id="tplTiles"></div>
+    <label class="f" for="title">封面上的大字 <small>（最多 12 個字）</small></label>
+    <input type="text" id="title" maxlength="12" placeholder="例如：生日快樂">
+    <div class="chips" id="titleChips"></div>
+  </section>
+
+  <!-- 2 名畫 -->
+  <section class="panel" data-step="1">
+    <h2>要不要用名畫當背景？</h2>
+    <p class="sub">這些是博物館開放給大家免費使用的名畫。不想要也可以。</p>
+    <div class="tiles" id="paintTiles"></div>
+  </section>
+
+  <!-- 3 寫字 -->
+  <section class="panel" data-step="2">
+    <h2>寫下想說的話</h2>
+    <p class="sub">空一行，就是新的一段。對方看的時候，會一段一段慢慢飄出來。</p>
+    <label class="f" for="to">給誰 <small>（會顯示成「親愛的○○」，可以不填）</small></label>
+    <input type="text" id="to" maxlength="20" placeholder="例如：小美">
+    <label class="f" for="message">內容</label>
+    <textarea id="message" placeholder="生日快樂！&#10;&#10;謝謝你這一年一直在我身邊……"></textarea>
+    <div class="count" id="count">0 / 1000</div>
+    <label class="f" for="from">署名 <small>（可以不填）</small></label>
+    <input type="text" id="from" maxlength="20" placeholder="例如：你的好朋友">
+    <div class="help">不知道怎麼寫嗎？<br>可以讓小麻糬幫你寫一張專屬的 👉 <a id="helpLink" target="_blank" rel="noopener">找小麻糬代寫 ✉️</a></div>
+  </section>
+
+  <!-- 4 音樂 -->
+  <section class="panel" data-step="3">
+    <h2>配一首音樂</h2>
+    <p class="sub">卡片翻開時開始播。按 ▶ 可以先聽。</p>
+    <div class="songs" id="songs"></div>
+  </section>
+
+  <!-- 5 結尾 -->
+  <section class="panel" data-step="4">
+    <h2>最後跳出來的小動畫</h2>
+    <p class="sub">字全部出來之後，它會出現在卡片最下面。</p>
+    <div class="tiles two" id="endTiles"></div>
+    <p class="err" id="err"></p>
+  </section>
+
+  <!-- 完成 -->
+  <section class="panel done-box" data-step="5">
+    <div class="big">💌</div>
+    <h2>卡片做好了！</h2>
+    <p class="sub">把這個網址傳給對方，他點開就能看到。</p>
+    <div class="link-row">
+      <input type="text" id="link" readonly>
+    </div>
+    <div class="share">
+      <button class="btn" id="copyBtn" type="button">複製網址</button>
+      <button class="btn line" id="lineBtn" type="button">分享到 LINE</button>
+      <button class="btn ghost" id="moreBtn" type="button" hidden>其他分享方式</button>
+      <button class="btn ghost" id="openBtn" type="button">自己先打開看看</button>
+    </div>
+    <div class="qr" id="qr"></div>
+    <p class="note">可以把這個方塊印出來，貼在禮物上，<br>對方用手機一掃就能打開。</p>
+    <p class="note">只有拿到網址的人看得到這張卡片。</p>
+  </section>
+</div>
+
+<div class="bar" id="bar">
+  <div class="in">
+    <button class="btn ghost" id="backBtn" type="button">上一步</button>
+    <button class="btn ghost" id="previewBtn" type="button" hidden>預覽</button>
+    <button class="btn" id="nextBtn" type="button">下一步</button>
+  </div>
+</div>
+
+<audio id="sample" preload="none"></audio>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/options.js"></script>
+<script src="js/card.js"></script>
+<script src="js/make.js"></script>
+</body>
+</html>
